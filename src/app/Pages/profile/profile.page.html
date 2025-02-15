@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="profile-page">
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <h1 style="text-align: left;">Welcome, {{ user?.displayName || 'User' }}</h1>
+    <h2 style="text-align: left;">{{ user?.email }}</h2>
+    <ion-avatar>
+      <img [src]="user?.photoURL || 'assets/default-profile-picture.jpg'" alt="Profile Picture" />
+      <span class="badge">NEW</span>
+    </ion-avatar>
+    <p color="dark">Need help with a New Task? Let’s set you up</p>
+    <ion-button expand="block" class="edit-profile-btn" color="dark">Edit Profile</ion-button>
+  </div>
+
+  <!-- First Things First -->
+  <div class="card-section">
+    <h3 color="dark">First Things First</h3>
+    <div class="bank-card">
+      <div class="card-header">
+        <span>Virtual Card</span>
+        <span>Single-use Virtual</span>
+      </div>
+      <h2>ADD BANK CARD</h2>
+      <ion-icon name="card" class="visa-icon"></ion-icon>
+    </div>
+  </div>
+</ion-content>

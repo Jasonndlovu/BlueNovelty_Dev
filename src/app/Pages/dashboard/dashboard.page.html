@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Welcome to your dashboard</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="dashboard-card">
+    <div class="user-info">
+      <div class="user-avatar"></div>
+      <div class="user-details">
+        <h3>User</h3>
+        <p>Inviting you with brilliant people who are committed to meaningful work.</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>What would you like to do today?</h2>
+
+  <section>
+    <h3>Business Services <a>See more...</a></h3>
+    <div class="services-container">
+      <div *ngFor="let service of businessServices" class="service-card">
+        <img [src]="service.image" />
+        <span class="label">{{ service.label }}</span>
+        <p>{{ service.title }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3>Household Services <a>See more...</a></h3>
+    <div class="services-container">
+      <div *ngFor="let service of householdServices" class="service-card">
+        <img [src]="service.image" />
+        <span class="label">{{ service.label }}</span>
+        <p>{{ service.title }}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="consultation-card">
+    <h4>Book a consultation</h4>
+    <p>Require business services? Set up a 30-90 min conference room call.</p>
+    <small>Only available for business services</small>
+    <ion-button>Set up a call</ion-button>
+  </div>
+</ion-content>

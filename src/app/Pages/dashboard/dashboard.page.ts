@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 import { User } from 'firebase/auth';
 import { Review, ReviewService } from '../../../services/review.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar ,IonButtons, IonButton, IonMenuButton, IonList, IonItem, IonLabel, IonAvatar, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonMenuButton, IonList, IonItem, IonLabel, IonAvatar, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular/standalone';
 
 
 @Component({
@@ -12,12 +12,16 @@ import { IonContent, IonHeader, IonTitle, IonToolbar ,IonButtons, IonButton, Ion
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [IonLabel,IonItem, IonList, IonButtons, IonButton,IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,IonMenuButton]
+
+  imports: [IonLabel, IonItem, IonList, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,IonMenuButton]
+
 })
 export class DashboardPage implements OnInit {
 
   user: User | null = null; // Store the logged-in user
   reviews: Review[] = [];
+
+  constructor(private auth: Auth,private reviewService: ReviewService)
 
   constructor(private auth: Auth,private reviewService: ReviewService) {}
   //constructor(private auth: Auth,private reviewService: ReviewService) {}
@@ -40,6 +44,18 @@ export class DashboardPage implements OnInit {
         console.log("No user is logged in.");
       }
     });
+
+  async loadUserReviews() {
+    console.log('this.user:'+ this.user)
+    if (!this.user) return;
+    console.log('user found')
+    try {
+      this.reviews = await this.reviewService.getUserReviews(this.user.uid);
+      console.log("User Reviews:", this.reviews);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    }
+
   }
 
 

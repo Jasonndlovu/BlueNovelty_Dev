@@ -1,0 +1,49 @@
+
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Complete Your Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+ <!-- <form [formGroup]="profileForm" (ngSubmit)="next()"> -->
+  <form  (ngSubmit)="next()">
+    <ion-list>
+      <ion-item>
+        <ion-label position="floating">Name</ion-label>
+        <ion-input formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Surname</ion-label>
+        <ion-input formControlName="surname"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Gender</ion-label>
+        <ion-select formControlName="gender">
+          <ion-select-option value="male">Male</ion-select-option>
+          <ion-select-option value="female">Female</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Date of Birth</ion-label>
+        <ion-input type="date" formControlName="dob"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>Expertise</ion-label>
+        <ion-select formControlName="expertise">
+          <ion-select-option value="developer">Developer</ion-select-option>
+          <ion-select-option value="designer">Designer</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Physical Address</ion-label>
+        <ion-input formControlName="address"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">ID Number/Passport</ion-label>
+        <ion-input formControlName="idNumber"></ion-input>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="full" type="submit">Next</ion-button>
+  </form>
+</ion-content>

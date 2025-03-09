@@ -19,6 +19,7 @@ export class AppComponent {
     
   public appPages = [
     { title: 'Dashboard', url: '/dashboard' },
+    { title: 'Property Information', url: '/property-information'},
     { title: 'Offers [Not done]', url: '/folder/offers' },
     { title: 'Alerts [Not done]', url: '/folder/outbox'},
     { title: 'Messages', url: '/messenger'},

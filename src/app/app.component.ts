@@ -2,6 +2,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonListHeader, IonNote, IonMenuToggle, IonItem, IonLabel, IonRouterOutlet, IonRouterLink } from '@ionic/angular/standalone';
+import { Auth } from '@angular/fire/auth';
+import { User } from 'firebase/auth';
 import { addIcons } from 'ionicons';
 import { mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 
@@ -12,6 +14,9 @@ import { mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutlin
   imports: [RouterLink, RouterLinkActive, IonApp, IonSplitPane, IonMenu, IonContent, IonList, IonListHeader, IonNote, IonMenuToggle, IonItem, IonLabel, IonRouterLink, IonRouterOutlet],
 })
 export class AppComponent {
+
+    user: User | null = null; // Store the logged-in user
+    
   public appPages = [
     { title: 'Dashboard', url: '/dashboard' },
     { title: 'Offers [Not done]', url: '/folder/offers' },
@@ -25,8 +30,19 @@ export class AppComponent {
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   
-  constructor(private router: Router) {
+  constructor(private router: Router,private auth: Auth) {
     addIcons({ mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp });
+  }
+  
+  ngOnInit() {
+    this.auth.onAuthStateChanged(user => {
+      if (user) {
+        this.user = user; // Assign the logged-in user details
+        console.log("User Details:", this.user);
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
   }
 
   navigateSettings() {

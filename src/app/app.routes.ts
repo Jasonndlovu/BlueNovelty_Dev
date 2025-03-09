@@ -50,4 +50,8 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () => import('./Pages/dashboard/dashboard.page').then( m => m.DashboardPage)
   },
+  {
+    path: 'reviews',
+    loadComponent: () => import('./Pages/reviews/reviews.page').then( m => m.ReviewsPage)
+  },
 ];

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { AuthService } from './../../../services/auth.service'
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from './../../../services/auth.service';
 import { Router } from '@angular/router';
 import { IonContent, IonButton, IonTextarea, IonCheckbox, IonIcon, IonInput } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
@@ -12,10 +12,26 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [ IonIcon, IonTextarea, IonButton, IonContent, FormsModule]
 })
-export class LoginPage {
+export class LoginPage implements OnInit {
   email = '';
   password = '';
-  constructor(private authService: AuthService, private router: Router, private alertController: AlertController) {}
+  displayName = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private alertController: AlertController
+  ) {}
+
+  ngOnInit() {
+    this.authService.loadUserFromStorage();
+    this.authService.userEmail$.subscribe(email => {
+      if (email) this.email = email;
+    });
+    this.authService.userName$.subscribe(name => {
+      if (name) this.displayName = name;
+    });
+  }
 
   async loginGoogle() {
     await this.authService.loginWithGoogle();
@@ -30,11 +46,11 @@ export class LoginPage {
   async login() {
     try {
       await this.authService.loginWithEmail(this.email, this.password);
+      this.router.navigate(['/users']);
     } catch (error) {
       console.error('Login failed:', error);
     }
   }
-
 
   async forgotPassword() {
     if (!this.email) {

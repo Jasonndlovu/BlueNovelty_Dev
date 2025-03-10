@@ -1,14 +1,20 @@
 import {
+  FirebaseApp,
+  FirebaseApps,
+  VERSION,
+  ɵAngularFireSchedulers,
+  ɵgetAllInstancesOf,
+  ɵgetDefaultInstanceOf,
+  ɵzoneWrap
+} from "./chunk-32LYA3ET.js";
+import {
   Component,
   Deferred,
   ErrorFactory,
-  FirebaseApp,
-  FirebaseApps,
   FirebaseError,
   LogLevel,
   Logger,
   SDK_VERSION,
-  VERSION,
   _getProvider,
   _isFirebaseServerApp,
   _registerComponent,
@@ -32,12 +38,8 @@ import {
   isReactNative,
   querystring,
   querystringDecode,
-  registerVersion,
-  ɵAngularFireSchedulers,
-  ɵgetAllInstancesOf,
-  ɵgetDefaultInstanceOf,
-  ɵzoneWrap
-} from "./chunk-ZRNPLF2S.js";
+  registerVersion
+} from "./chunk-EKCKWM7O.js";
 import {
   InjectionToken,
   Injector,
@@ -10029,4 +10031,4 @@ rxfire/auth/index.esm.js:
    * limitations under the License.
    *)
 */
-//# sourceMappingURL=chunk-SRIYCIAP.js.map
+//# sourceMappingURL=chunk-IIVVMHQ3.js.map

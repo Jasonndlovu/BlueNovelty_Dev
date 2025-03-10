@@ -1,16 +1,22 @@
 import {
   AppCheckInstances,
   AuthInstances
-} from "./chunk-SRIYCIAP.js";
+} from "./chunk-IIVVMHQ3.js";
 import {
-  Component,
   FirebaseApp,
   FirebaseApps,
+  VERSION,
+  ɵAngularFireSchedulers,
+  ɵgetAllInstancesOf,
+  ɵgetDefaultInstanceOf,
+  ɵzoneWrap
+} from "./chunk-32LYA3ET.js";
+import {
+  Component,
   FirebaseError,
   LogLevel,
   Logger,
   SDK_VERSION,
-  VERSION,
   _getProvider,
   _isFirebaseServerApp,
   _registerComponent,
@@ -23,12 +29,8 @@ import {
   getUA,
   isIndexedDBAvailable,
   isSafari,
-  registerVersion,
-  ɵAngularFireSchedulers,
-  ɵgetAllInstancesOf,
-  ɵgetDefaultInstanceOf,
-  ɵzoneWrap
-} from "./chunk-ZRNPLF2S.js";
+  registerVersion
+} from "./chunk-EKCKWM7O.js";
 import "./chunk-5OHZQE3D.js";
 import {
   InjectionToken,

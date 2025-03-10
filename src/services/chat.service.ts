@@ -110,8 +110,4 @@ export class ChatService {
       return [];
     }
   }
-  
-  
-  
-  
 }

@@ -1,71 +1,58 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/services/auth.service';
-import { User } from '@angular/fire/auth';
-import { Router } from '@angular/router';
-import { Firestore, doc, getDoc } from '@angular/fire/firestore';  // Ensure Firestore is imported correctly
-import { environment } from 'src/environments/environment';
-import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
+import { IonicModule } from '@ionic/angular';
+import { AuthService } from './../../../services/auth.service'; // Make sure to import AuthService
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.page.html',
   styleUrls: ['./user-profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, CommonModule]
+  imports: [CommonModule, IonicModule]
 })
 export class UserProfilePage implements OnInit {
-  user: User | null = null;
-  userEmail: string | null = null;
-  displayName: string | null = null;
-  photoURL: string | null = null;
-  createdAt: string | null = null;
-  cleanerProfile: any = {};  // Will hold additional cleaner profile data
+  userData: any = {}; // Holds user data
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
-    private firestore: Firestore  // Ensure this is injected correctly and Firestore is properly set up
+    private firestore: Firestore, 
+    private auth: Auth, 
+    private authService: AuthService,  // Inject AuthService
+    private router: Router // Inject Router for navigation
   ) {}
 
-  logout() {
-    this.authService.logout().then(() => {
-      this.router.navigate(['/login']);
-    });
-  }
-
   async ngOnInit() {
-    this.authService.getCurrentUser().subscribe(async user => {
-      if (!user) {
-        this.router.navigate(['/login']);
-      } else {
-        this.user = user;
-        this.userEmail = user.email;
-        this.displayName = user.displayName;
-        this.photoURL = user.photoURL;
-        this.createdAt = user.metadata.creationTime
-          ? new Date(user.metadata.creationTime).toLocaleString()
-          : 'Unknown';
-
-        // Fetch cleaner profile data from Firestore
-        await this.loadCleanerProfile(user.uid);
-      }
-    });
+    await this.getUserData();
   }
 
-  async loadCleanerProfile(uid: string) {
+  async getUserData() {
     try {
-      const docRef = doc(this.firestore, 'cleaners', uid);  // Firestore's doc function
-      const docSnap = await getDoc(docRef);  // Get document snapshot
+      const user = this.auth.currentUser; // Get current logged-in user
+      if (!user) return; // Exit if no user is logged in
 
-      if (docSnap.exists()) {
-        this.cleanerProfile = docSnap.data();
-      } else {
-        console.log('No cleaner profile found');
+      const userRef = doc(this.firestore, `users/${user.uid}`); // Firestore path
+      const userSnap = await getDoc(userRef); // Fetch user data
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data(); // Get document data
+
+        // 🔥 Merge userProfile fields into main object
+        this.userData = {
+          displayName: userData['displayName'] || '',
+          email: userData['email'] || '',
+          photoURL: userData['photoURL'] || '',
+          ...userData['userProfile'] || {} // Merging userProfile fields
+        };
       }
     } catch (error) {
-      console.error('Error fetching cleaner profile:', error);
+      console.error('Error fetching user data:', error);
     }
+  }
+
+  async logout() {
+    await this.authService.logout();  // Call logout method from AuthService
+    this.router.navigate(['/login']);  // Redirect to the login page
   }
 }

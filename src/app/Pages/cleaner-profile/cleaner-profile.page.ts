@@ -21,7 +21,7 @@ import { AuthService } from 'src/services/auth.service'; // Ensure this path is 
   ]
 })
 export class CleanerProfilePage implements OnInit {
-  cleanerProfileForm: FormGroup;
+  userProfileForm: FormGroup;
   firestore: Firestore;
   userId: string | null = null;  // This will hold the user's ID
 
@@ -33,7 +33,7 @@ export class CleanerProfilePage implements OnInit {
     const app = initializeApp(environment.firebaseConfig);
     this.firestore = getFirestore(app);
 
-    this.cleanerProfileForm = this.fb.group({
+    this.userProfileForm = this.fb.group({
       firstName: ['', [Validators.required]],
       surname: ['', [Validators.required]],
       gender: ['', [Validators.required]],
@@ -56,7 +56,7 @@ export class CleanerProfilePage implements OnInit {
   }
 
   async onSubmit() {
-    if (this.cleanerProfileForm.valid && this.userId) {
+    if (this.userProfileForm.valid && this.userId) {
       try {
         const userRef = doc(this.firestore, 'users', this.userId);  // Get reference to the user document
         const userDoc = await getDoc(userRef);  // Check if the user document exists
@@ -64,12 +64,12 @@ export class CleanerProfilePage implements OnInit {
         if (userDoc.exists()) {
           // If the user exists, update the document with cleaner profile data
           await updateDoc(userRef, {
-            cleanerProfile: this.cleanerProfileForm.value  // Add the cleaner profile as a subfield
+            userProfile: this.userProfileForm.value  // Add the cleaner profile as a subfield
           });
         } else {
           // If the user doesn't exist, create a new user document (you could also handle this differently)
           await setDoc(userRef, {
-            cleanerProfile: this.cleanerProfileForm.value  // Add cleaner profile data
+            userProfile: this.userProfileForm.value  // Add cleaner profile data
           });
         }
 

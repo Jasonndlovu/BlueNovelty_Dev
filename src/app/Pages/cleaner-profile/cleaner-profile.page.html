@@ -11,7 +11,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <form [formGroup]="cleanerProfileForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="userProfileForm" (ngSubmit)="onSubmit()">
     <ion-list>
       <!-- Name Field -->
       <ion-item>
@@ -61,7 +61,7 @@
     </ion-list>
 
     <ion-footer>
-      <ion-button expand="full" type="submit" [disabled]="!cleanerProfileForm.valid">Next</ion-button>
+      <ion-button expand="full" type="submit" [disabled]="!userProfileForm.valid">Next</ion-button>
     </ion-footer>
   </form>
 </ion-content>

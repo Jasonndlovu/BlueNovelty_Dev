@@ -16,6 +16,7 @@ export class AuthService {
 
   userEmail$ = this.userEmail.asObservable();
   userName$ = this.userName.asObservable();
+  router: any;
 
   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();

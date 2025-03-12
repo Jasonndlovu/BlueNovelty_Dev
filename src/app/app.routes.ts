@@ -49,9 +49,13 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./Pages/dashboard/dashboard.page').then( m => m.DashboardPage)
-  },  {
+  },
+  {
     path: 'cleaner-profile',
     loadComponent: () => import('./Pages/cleaner-profile/cleaner-profile.page').then( m => m.CleanerProfilePage)
+  },  {
+    path: 'user-profile',
+    loadComponent: () => import('./Pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
   },
 
 ];

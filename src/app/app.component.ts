@@ -22,6 +22,7 @@ export class AppComponent {
     { title: 'Log out [Not done]', url: '/folder/spam'},
     { title: 'View users [Testing purposes]', url: '/users'},
     { title: 'Cleaner Profile', url: '/cleaner-profile'},
+    { title: 'User Profile', url: '/user-profile'},
   ];
 
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];

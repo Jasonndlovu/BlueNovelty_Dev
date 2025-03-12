@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>User Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="user; else loading">
+    <ion-card-header>
+      <ion-card-title>{{ displayName || 'Unnamed User' }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="profile-info">
+        <ion-img [src]="photoURL || 'assets/default-avatar.png'"></ion-img>
+
+        <ion-item>
+          <ion-label>Email</ion-label>
+          <ion-text>{{ userEmail }}</ion-text>
+        </ion-item>
+        <ion-item>
+          <ion-label>Created At</ion-label>
+          <ion-text>{{ createdAt }}</ion-text>
+        </ion-item>
+
+        <!-- Display Cleaner Profile Information -->
+        <ion-item *ngIf="cleanerProfile.firstName">
+          <ion-label>First Name</ion-label>
+          <ion-text>{{ cleanerProfile.firstName }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.surname">
+          <ion-label>Surname</ion-label>
+          <ion-text>{{ cleanerProfile.surname }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.gender">
+          <ion-label>Gender</ion-label>
+          <ion-text>{{ cleanerProfile.gender }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.dob">
+          <ion-label>Date of Birth</ion-label>
+          <ion-text>{{ cleanerProfile.dob }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.phoneNumber">
+          <ion-label>Phone Number</ion-label>
+          <ion-text>{{ cleanerProfile.phoneNumber }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.address">
+          <ion-label>Address</ion-label>
+          <ion-text>{{ cleanerProfile.address }}</ion-text>
+        </ion-item>
+        <ion-item *ngIf="cleanerProfile.idNumber">
+          <ion-label>ID Number</ion-label>
+          <ion-text>{{ cleanerProfile.idNumber }}</ion-text>
+        </ion-item>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="full" (click)="logout()">Logout</ion-button>
+
+  <ng-template #loading>
+    <ion-spinner name="crescent"></ion-spinner>
+    <ion-text>Loading...</ion-text>
+  </ng-template>
+</ion-content>

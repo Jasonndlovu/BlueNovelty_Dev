@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Firestore, collection, addDoc, getFirestore } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDoc, getFirestore, setDoc, updateDoc } from '@angular/fire/firestore';
 import { initializeApp } from 'firebase/app';
 import { environment } from 'src/environments/environment';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from 'src/services/auth.service'; // Ensure this path is correct
 
 @Component({
   selector: 'app-cleaner-profile',
@@ -22,8 +23,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 export class CleanerProfilePage implements OnInit {
   cleanerProfileForm: FormGroup;
   firestore: Firestore;
+  userId: string | null = null;  // This will hold the user's ID
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService // Inject the auth service
+  ) {
     // Initialize Firebase app and Firestore
     const app = initializeApp(environment.firebaseConfig);
     this.firestore = getFirestore(app);
@@ -39,12 +44,35 @@ export class CleanerProfilePage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Fetch the current user ID
+    this.authService.getCurrentUser().subscribe(user => {
+      if (user) {
+        this.userId = user.uid;  // Set the user ID from Firebase Auth
+      } else {
+        alert('No user logged in');
+      }
+    });
+  }
 
   async onSubmit() {
-    if (this.cleanerProfileForm.valid) {
+    if (this.cleanerProfileForm.valid && this.userId) {
       try {
-        await addDoc(collection(this.firestore, 'cleaners'), this.cleanerProfileForm.value);
+        const userRef = doc(this.firestore, 'users', this.userId);  // Get reference to the user document
+        const userDoc = await getDoc(userRef);  // Check if the user document exists
+
+        if (userDoc.exists()) {
+          // If the user exists, update the document with cleaner profile data
+          await updateDoc(userRef, {
+            cleanerProfile: this.cleanerProfileForm.value  // Add the cleaner profile as a subfield
+          });
+        } else {
+          // If the user doesn't exist, create a new user document (you could also handle this differently)
+          await setDoc(userRef, {
+            cleanerProfile: this.cleanerProfileForm.value  // Add cleaner profile data
+          });
+        }
+
         alert('Profile saved successfully!');
       } catch (error) {
         console.error('Error saving data:', error);

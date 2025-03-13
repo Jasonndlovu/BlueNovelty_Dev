@@ -7,6 +7,11 @@
 <ion-content class="ion-padding">
   <form (ngSubmit)="saveUserProperty()">
     <ion-item>
+      <ion-label position="floating">Property Name</ion-label>
+      <ion-input [(ngModel)]="name" name="propertyType" required></ion-input>
+    </ion-item>
+
+    <ion-item>
       <ion-label>Property Type</ion-label>
       <ion-select [(ngModel)]="selectedPropertyType" name="propertyType" required>
         <ion-select-option *ngFor="let type of propertyTypes" [value]="type">{{ type }}</ion-select-option>

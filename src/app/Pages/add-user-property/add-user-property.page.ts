@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, addDoc, doc, updateDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, getDocs } from '@angular/fire/firestore';
 import { Auth, user } from '@angular/fire/auth';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class AddUserPropertyPage implements OnInit {
   userId: string = '';
+  name: string = '';
   propertyTypes: string[] = [];
   selectedPropertyType: string = '';
   numberOfBedrooms: number = 1;
@@ -25,7 +26,6 @@ export class AddUserPropertyPage implements OnInit {
 
   constructor(private firestore: Firestore, private auth: Auth) {}
 
-
   ngOnInit() {
     user(this.auth).subscribe(user => {
       if (user) {
@@ -34,10 +34,9 @@ export class AddUserPropertyPage implements OnInit {
         alert('User is not authenticated.');
       }
     });
-  
+
     this.getPropertyTypes();
   }
-  
 
   async getPropertyTypes() {
     const propertyTypesRef = collection(this.firestore, 'property-types');
@@ -57,9 +56,11 @@ export class AddUserPropertyPage implements OnInit {
     }
 
     try {
-      // Save property details to Firestore
+      // Save property details to Firestore with userId field
       const userPropertyRef = collection(this.firestore, 'user-property');
-      const docRef = await addDoc(userPropertyRef, {
+      await addDoc(userPropertyRef, {
+        userId: this.userId,
+        name: this.name,
         propertyType: this.selectedPropertyType,
         numberOfBedrooms: this.numberOfBedrooms,
         numberOfBathrooms: this.numberOfBathrooms,
@@ -68,12 +69,6 @@ export class AddUserPropertyPage implements OnInit {
         numberOfGarages: this.numberOfGarages,
         numberOfFloors: this.numberOfFloors,
         createdAt: new Date()
-      });
-
-      // Link the property to the user
-      const userDocRef = doc(this.firestore, 'users', this.userId);
-      await updateDoc(userDocRef, {
-        userPropertyId: docRef.id
       });
 
       alert('Property details saved successfully!');
@@ -85,6 +80,7 @@ export class AddUserPropertyPage implements OnInit {
   }
 
   clearForm() {
+    this.name = '';
     this.selectedPropertyType = '';
     this.numberOfBedrooms = 1;
     this.numberOfBathrooms = 1;

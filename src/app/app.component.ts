@@ -23,6 +23,8 @@ export class AppComponent {
     { title: 'View users [Testing purposes]', url: '/users'},
     { title: 'Cleaner Profile', url: '/cleaner-profile'},
     { title: 'User Profile', url: '/user-profile'},
+    { title: 'Add Property Types', url: '/add-property-type'},
+    { title: 'Add User Property', url: '/add-user-property'},
   ];
 
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];

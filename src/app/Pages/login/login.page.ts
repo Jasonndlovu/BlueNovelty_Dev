@@ -34,19 +34,28 @@ export class LoginPage implements OnInit {
   }
 
   async loginGoogle() {
-    await this.authService.loginWithGoogle();
-    this.router.navigate(['/users']);
+    const result = await this.authService.loginWithGoogle();
+    if (result.user) {
+      const role = await this.authService.getUserRole(result.user.uid);
+      this.redirectUser(role);
+    }
   }
 
   async loginApple() {
-    await this.authService.loginWithApple();
-    this.router.navigate(['/users']);
+    const result = await this.authService.loginWithApple();
+    if (result.user) {
+      const role = await this.authService.getUserRole(result.user.uid);
+      this.redirectUser(role);
+    }
   }
 
   async login() {
     try {
-      await this.authService.loginWithEmail(this.email, this.password);
-      this.router.navigate(['/users']);
+      const result = await this.authService.loginWithEmail(this.email, this.password);
+      if (result.user) {
+        const role = await this.authService.getUserRole(result.user.uid);
+        this.redirectUser(role);
+      }
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -73,5 +82,18 @@ export class LoginPage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+
+  redirectUser(role: string | null) {
+    if (!role) {
+      this.router.navigate(['/landing']); // No role set, return to landing page
+      return;
+    }
+    
+    if (role === 'user') {
+      this.router.navigate(['/dashboard']);
+    } else if (role === 'service-provider') {
+      this.router.navigate(['/cleaner-profile']);
+    }
   }
 }

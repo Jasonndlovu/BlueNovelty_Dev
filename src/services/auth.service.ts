@@ -13,9 +13,11 @@ export class AuthService {
 
   private userEmail = new BehaviorSubject<string | null>(null);
   private userName = new BehaviorSubject<string | null>(null);
+  private userRole = new BehaviorSubject<string | null>(null);
 
   userEmail$ = this.userEmail.asObservable();
   userName$ = this.userName.asObservable();
+  userRole$ = this.userRole.asObservable();
   router: any;
 
   async loginWithGoogle() {
@@ -82,6 +84,7 @@ export class AuthService {
     this.userName.next(null);
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
   }
 
   async saveUserData(user: User) {
@@ -89,13 +92,21 @@ export class AuthService {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
+      const role = localStorage.getItem('userRole'); // Get stored role
+      if (!role) {
+        throw new Error('Role not found in local storage');
+      }
+
       await setDoc(userRef, {
         uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL || '',
+        role: role, // Save role permanently
         createdAt: new Date()
       });
+
+      localStorage.removeItem('userRole'); // Remove after saving
     }
   }
 
@@ -108,5 +119,25 @@ export class AuthService {
     const storedName = localStorage.getItem('userName');
     if (storedEmail) this.userEmail.next(storedEmail);
     if (storedName) this.userName.next(storedName);
+  }
+
+  async getUserRole(uid: string): Promise<string | null> {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    const userSnap = await getDoc(userRef);
+    return userSnap.exists() ? userSnap.data()?.['role'] || null : null;
+  }
+
+  async setUserRole(role: 'user' | 'service-provider') {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) return;
+
+    const userRef = doc(this.firestore, `users/${currentUser.uid}`);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists() || !userSnap.data()?.['role']) {
+      await setDoc(userRef, { role }, { merge: true }); // Store role in Firestore
+      localStorage.setItem('userRole', role); // Store in localStorage
+      this.userRole.next(role); // Update observable
+    }
   }
 }

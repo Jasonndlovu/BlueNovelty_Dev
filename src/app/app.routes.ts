@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'onboarding',
+    redirectTo: 'landing',
     pathMatch: 'full',
   },
   {
@@ -57,13 +57,18 @@ export const routes: Routes = [
   {
     path: 'user-profile',
     loadComponent: () => import('./Pages/user-profile/user-profile.page').then( m => m.UserProfilePage)
-  },  {
+  },
+  {
     path: 'add-property-type',
     loadComponent: () => import('./Pages/add-property-type/add-property-type.page').then( m => m.AddPropertyTypePage)
   },
   {
     path: 'add-user-property',
     loadComponent: () => import('./Pages/add-user-property/add-user-property.page').then( m => m.AddUserPropertyPage)
+  },
+  {
+    path: 'landing',
+    loadComponent: () => import('./Pages/landing/landing.page').then( m => m.LandingPage)
   }
 
 ];

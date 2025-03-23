@@ -19,17 +19,16 @@ export class AppComponent {
     
   public appPages = [
     { title: 'Dashboard', url: '/dashboard' },
-    { title: 'Property Information', url: '/property-information'},
-    { title: 'Offers [Not done]', url: '/folder/offers' },
-    { title: 'Alerts [Not done]', url: '/folder/outbox'},
+    { title: 'Available Jobs', url: '/available-jobs'},
+    { title: 'Accept Job', url:'/accept-job'},
+    { title: 'Accept Service', url:'/accept-service'},
     { title: 'Messages', url: '/messenger'},
     { title: 'Service History [Not done]', url: '/folder/service'},
-    { title: 'Switch Accounts???? [Not done]', url: '/folder/switch'},
-    { title: 'Log out [Not done]', url: '/folder/spam'},
     { title: 'View users [Testing purposes]', url: '/users'},
+    { title: 'User Profile', url: '/user-profile'},
     
   ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders']; 
   
   constructor(private router: Router,private auth: Auth) {
     addIcons({ mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp });

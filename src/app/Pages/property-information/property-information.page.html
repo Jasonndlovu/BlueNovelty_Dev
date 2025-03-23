@@ -12,7 +12,7 @@
       <h1>Let's get you started</h1>
       <ion-item>
         <ion-label>Details About Your Place</ion-label>
-        <ion-button id="open-action-sheet">Open</ion-button>
+        <ion-button id="open-action-sheet">Select</ion-button>
 <ion-action-sheet trigger="open-action-sheet" 
   header="Select property type..."
   [buttons]="actionSheetButtons">
@@ -27,13 +27,14 @@
     </ion-card-header>
     
     <ion-card-content>
-      <p><strong>Location:</strong> 27 Bosbok Avenue, Akasia</p>
+      <p><strong>Location:</strong> {{ selectedProperty?.location }}</p>
       <ul>
-        <li>4 Bedrooms</li>
-        <li>2 Bathrooms</li>
-        <li>2 Living Rooms</li>
-        <li>1 Kitchen</li>
-        <li>2 Garages</li>
+        <li>Bedrooms: {{ selectedProperty?.numberOfBedrooms }}</li>
+        <li>Bathrooms: {{ selectedProperty?.numberOfBathrooms }}</li>
+        <li>Living Rooms: {{ selectedProperty?.numberOfLivingRooms }}</li>
+        <li>Kitchens: {{ selectedProperty?.numberOfKitchens }}</li>
+        <li>Garages: {{ selectedProperty?.numberOfGarages }}</li>
+        <li>Floors: {{ selectedProperty?.numberOfFloors }}</li>
       </ul>
 
       <ion-textarea placeholder="Tell us any additional information..."></ion-textarea>

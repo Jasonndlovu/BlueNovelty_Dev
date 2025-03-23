@@ -24,10 +24,10 @@
   <section>
     <h3>Business Services <a>See more...</a></h3>
     <div class="services-container">
-      <div *ngFor="let service of businessServices" class="service-card">
-        <img [src]="service.image" />
-        <span class="label">{{ service.label }}</span>
-        <p>{{ service.title }}</p>
+      <div *ngFor="let service of businessServices" class="service-card" (click)="navigateTo(service.url)">
+        <img [src]="service.image" alt="Service Image">
+        <h3>{{ service.title }}</h3>
+        <span>{{ service.label }}</span>
       </div>
     </div>
   </section>
@@ -35,10 +35,10 @@
   <section>
     <h3>Household Services <a>See more...</a></h3>
     <div class="services-container">
-      <div *ngFor="let service of householdServices" class="service-card">
-        <img [src]="service.image" />
-        <span class="label">{{ service.label }}</span>
-        <p>{{ service.title }}</p>
+      <div *ngFor="let service of householdServices" class="service-card" (click)="navigateTo(service.url)">
+        <img [src]="service.image" alt="Service Image">
+        <h3>{{ service.title }}</h3>
+        <span>{{ service.label }}</span>
       </div>
     </div>
   </section>

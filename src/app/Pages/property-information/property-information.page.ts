@@ -5,7 +5,9 @@ import { NavController, ModalController } from '@ionic/angular';
 import { ToastController  } from '@ionic/angular';
 import { IonContent, IonHeader, IonActionSheet,IonTitle,IonSelect, IonSelectOption, IonToolbar, IonButtons, IonButton, IonIcon, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonTextarea, IonList, IonItem, IonLabel, IonFooter, IonModal, IonDatetime } from '@ionic/angular/standalone';
 import { ServiceRequestService } from 'src/services/service-request.service';
-import { Auth } from '@angular/fire/auth';  // ✅ Import Auth
+import { Property, PropertyService } from 'src/services/property.service';
+import { Auth, User } from '@angular/fire/auth';  // ✅ Import Auth
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-property-information',
@@ -16,11 +18,17 @@ import { Auth } from '@angular/fire/auth';  // ✅ Import Auth
 })
 export class PropertyInformationPage implements OnInit {
   step: number = 1; // Controls step navigation
-  selectedProperty: string | undefined; // This will hold the selected property value
+  //selectedProperty: string | undefined; // This will hold the selected property value
   selectedDate_Time: string | null = null;
   showDateTimeModal = false; // Controls the modal visibility
   minDate: string;
   maxDate: string;
+  user: User | null = null; // Store the logged-in user
+  property: Property[] = [];
+  actionSheetButtons: any[] = []; // Initialize the buttons array as empty
+
+  selectedProperty: Property | undefined;
+  
 
   // For time validation
   isTimeValid: boolean = true;  // Track time validity
@@ -38,36 +46,13 @@ export class PropertyInformationPage implements OnInit {
     { name: 'Laundry', icon: 'water-outline', selected: false },
   ];
 
- // Define the action sheet buttons
- public actionSheetButtons = [
-  {
-    text: 'House',
-    handler: () => {
-      this.selectedProperty = 'House'; // Set selectedProperty to 'House'
-      this.step = 2;
-    },
-  },
-  {
-    text: 'Apartment/Flat',
-    handler: () => {
-      this.selectedProperty = 'Apartment/Flat'; // Set selectedProperty to 'Apartment/Flat'
-      this.step = 2;
-    },
-  },
-  {
-    text: 'Office',
-    handler: () => {
-      this.selectedProperty = 'Office'; // Set selectedProperty to 'Office'
-      this.step = 2;
-    },
-  },
-];
 
 // cancel() {
 //   this.modal.dismiss(null, 'cancel');
 // }
 
-  constructor(private toastController: ToastController,private serviceRequestService: ServiceRequestService,private auth: Auth) // ✅ Inject Firebase Auth) 
+
+  constructor(private toastController: ToastController,private serviceRequestService: ServiceRequestService,private auth: Auth, private propertyService: PropertyService) // ✅ Inject Firebase Auth) 
   {
     let today = new Date();
     let min = new Date();
@@ -79,7 +64,18 @@ export class PropertyInformationPage implements OnInit {
     this.maxDate = max.toISOString().split('T')[0]; // Format as YYYY-MM-DD
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("hit button")
+    this.auth.onAuthStateChanged(async user => {
+      if (user) {
+        this.user = user; // Assign the logged-in user details
+        console.log("User Details:", this.user);
+        await this.loadUserProperties(); // Fetch reviews once the user is authenticated
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
+  }
 
   validateTime(event: any) {
     const selectedDateTime = new Date(event.detail.value);
@@ -170,7 +166,28 @@ export class PropertyInformationPage implements OnInit {
       console.error("Error creating service request:", error);
     }
   }
-  
+
+
+   // Dynamically load actionSheetButtons from the properties object
+   async loadUserProperties() {
+    if (!this.user) return;
+    console.log('user found');
+    try {
+      this.property = await this.propertyService.getUserProperties(this.user.uid);
+      console.log("User Properties:", this.property);
+
+      // Now that properties are loaded, generate the action sheet buttons
+      this.actionSheetButtons = this.property.map(property => ({
+        text: property.propertyType, // Set the button text to the property type
+        handler: () => {
+          this.selectedProperty = property;
+          this.step = 2;  // Move to the next step
+        },
+      }));
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  }
 
 }
 

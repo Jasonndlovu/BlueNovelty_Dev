@@ -39,8 +39,6 @@ export class ChatService {
   
   // Method to get messages between the current user and a chat partner
   getMessages(currentUserId: string, chatPartnerId: string): Observable<any[]> {
-    console.log(currentUserId);
-    console.log(chatPartnerId);
     if (!currentUserId || !chatPartnerId) {
       console.warn('Current user ID or chat partner ID is missing');
       return of([]);

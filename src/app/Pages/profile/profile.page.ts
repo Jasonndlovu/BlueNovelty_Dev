@@ -33,4 +33,9 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/profile-settings']);
   }
 
+  navigateProperty()
+  {
+    this.router.navigate(['/add-user-property']);
+  }
+
 }

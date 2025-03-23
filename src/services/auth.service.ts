@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, signOut, authState, User, OAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject  } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,15 @@ import { Observable } from 'rxjs';
 export class AuthService {
   private auth = inject(Auth);
   private firestore: Firestore = inject(Firestore);
+
+  private userEmail = new BehaviorSubject<string | null>(null);
+  private userName = new BehaviorSubject<string | null>(null);
+  private userRole = new BehaviorSubject<string | null>(null);
+
+  userEmail$ = this.userEmail.asObservable();
+  userName$ = this.userName.asObservable();
+  userRole$ = this.userRole.asObservable();
+  router: any;
 
   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();
@@ -61,13 +70,22 @@ export class AuthService {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
+
+      const role = localStorage.getItem('userRole'); // Get stored role
+      if (!role) {
+        throw new Error('Role not found in local storage');
+      }
+
       await setDoc(userRef, {
         uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL || '',
+        role: role, // Save role permanently
         createdAt: new Date()
       });
+
+      localStorage.removeItem('userRole'); // Remove after saving
     }
   }
 
@@ -77,6 +95,34 @@ export class AuthService {
 
   getCurrentUser(): Observable<User | null> {
     return authState(this.auth); // This ensures it is correctly accessed
+  }
+
+
+  loadUserFromStorage() {
+    const storedEmail = localStorage.getItem('userEmail');
+    const storedName = localStorage.getItem('userName');
+    if (storedEmail) this.userEmail.next(storedEmail);
+    if (storedName) this.userName.next(storedName);
+  }
+
+  async getUserRole(uid: string): Promise<string | null> {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    const userSnap = await getDoc(userRef);
+    return userSnap.exists() ? userSnap.data()?.['role'] || null : null;
+  }
+
+  async setUserRole(role: 'user' | 'service-provider') {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) return;
+
+    const userRef = doc(this.firestore, `users/${currentUser.uid}`);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists() || !userSnap.data()?.['role']) {
+      await setDoc(userRef, { role }, { merge: true }); // Store role in Firestore
+      localStorage.setItem('userRole', role); // Store in localStorage
+      this.userRole.next(role); // Update observable
+    }
   }
 }
 

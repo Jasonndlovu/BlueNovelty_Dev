@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService } from './../../../services/auth.service'
+import { AuthService } from './../../../services/auth.service';
 import { Router } from '@angular/router';
 import { IonContent, IonButton, IonTextarea, IonCheckbox, IonIcon, IonInput } from '@ionic/angular/standalone';
 import { AlertController } from '@ionic/angular';
@@ -19,17 +19,21 @@ export class LoginPage {
 
   async loginGoogle() {
     await this.authService.loginWithGoogle();
-    this.router.navigate(['/users']);
+    
+    this.router.navigate(['/dashboard']);
   }
 
   async loginApple() {
     await this.authService.loginWithApple();
-    this.router.navigate(['/users']);
+    
+    this.router.navigate(['/dashboard']);
   }
 
   async login() {
     try {
       await this.authService.loginWithEmail(this.email, this.password);
+      
+      this.router.navigate(['/dashboard']);
     } catch (error) {
       console.error('Login failed:', error);
     }

@@ -34,20 +34,14 @@ export class AppComponent {
   }
   
   ngOnInit() {
-    const storedEmail = localStorage.getItem('userEmail');
-    const storedName = localStorage.getItem('userName');
-    const storedRole = localStorage.getItem('userRole');
-
-    if (storedEmail || storedName || storedRole) {
-      this.user = {
-        email: storedEmail,
-        displayName: storedName,
-        role: storedRole
-      } as any;
-      console.log("User Details from Local Storage:", this.user);
-    } else {
-      console.log("No user data found in Local Storage.");
-    }
+    this.auth.onAuthStateChanged(user => {
+      if (user) {
+        this.user = user; // Assign the logged-in user details
+        console.log("User Details:", this.user);
+      } else {
+        console.log("No user is logged in.");
+      }
+    });
   }
 
   navigateSettings() {

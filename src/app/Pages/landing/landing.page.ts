@@ -15,7 +15,6 @@ export class LandingPage {
 
   selectRole(role: 'user' | 'service-provider') {
     localStorage.setItem('userRole', role); // Save role temporarily
-    this.authService.setUserRole(role); // Store in Firestore on login
     this.router.navigate(['/onboarding']); // Redirect to login page
   }
 }

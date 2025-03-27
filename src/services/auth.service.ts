@@ -1,15 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Auth, GoogleAuthProvider, signInWithPopup, signOut, authState, User, OAuthProvider, signInWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
-import { inject } from '@angular/core';
 import { Observable, BehaviorSubject  } from 'rxjs';
+import { createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { getAuth, updateProfile } from "firebase/auth";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private auth = inject(Auth);
-  private firestore: Firestore = inject(Firestore);
+  private firestore = inject(Firestore);
 
   private userEmail = new BehaviorSubject<string | null>(null);
   private userName = new BehaviorSubject<string | null>(null);
@@ -65,32 +66,73 @@ export class AuthService {
     }
   }
 
-  async saveUserData(user: User) {
+  async saveUserData(user: User, additionalData?: { name: string; surname: string; phone: string },justRegistered?: boolean) {
     const userRef = doc(this.firestore, `users/${user.uid}`);
     const userSnap = await getDoc(userRef);
 
+    if (justRegistered != true){
+      justRegistered = false;
+    }
+
     if (!userSnap.exists()) {
+        const role = localStorage.getItem('userRole'); // Get stored role
+        const displayName = user.displayName || `${additionalData?.name} ${additionalData?.surname}`;
+        const email = user.email || '';
 
-      const role = localStorage.getItem('userRole'); // Get stored role
-      if (!role) {
-        throw new Error('Role not found in local storage');
+        console.log('Role:', role);
+        console.log('Display Name:', displayName);
+        console.log('Email:', email);
+
+        if (!role) {
+            throw new Error('Role not found in local storage');
+        }
+
+        await setDoc(userRef, {
+            uid: user.uid,
+            displayName: displayName,
+            email: email,
+            photoURL: user.photoURL || '',
+            role: role, // Save role permanently
+            phoneNumber: additionalData?.phone || '',
+            createdAt: new Date()
+        });
+        if(justRegistered){this.updateUserProfile(displayName);}
+        console.log('Saving to localStorage...');
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userName', displayName);
+
+        console.log('Saved:', localStorage.getItem('userEmail'), localStorage.getItem('userName'));
+    }
+  }
+  
+  async updateUserProfile(displayName: string){
+    var auth = getAuth();
+    if (auth.currentUser) {
+      try {
+        await updateProfile(auth.currentUser, { displayName });
+        console.log("Display Name Updated:", auth.currentUser.displayName);
+      } catch (error) {
+        console.error("Error updating display name:", error);
       }
-
-      await setDoc(userRef, {
-        uid: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoURL: user.photoURL || '',
-        role: role, // Save role permanently
-        createdAt: new Date()
-      });
-
-      localStorage.removeItem('userRole'); // Remove after saving
+    } else {
+      console.log("No user is signed in.");
     }
   }
 
   async logout() {
-    return signOut(this.auth);
+    try {
+      await this.auth.signOut();
+      this.clearLocalStorage();
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  }
+
+  clearLocalStorage() {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userRole');
+    sessionStorage.clear(); // Clear all session storage
   }
 
   getCurrentUser(): Observable<User | null> {
@@ -122,6 +164,21 @@ export class AuthService {
       await setDoc(userRef, { role }, { merge: true }); // Store role in Firestore
       localStorage.setItem('userRole', role); // Store in localStorage
       this.userRole.next(role); // Update observable
+    }
+  }
+
+  async registerWithEmail(email: string, password: string, additionalData: { name: string; surname: string; phone: string }) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      const user = userCredential.user;
+  
+      // Save additional user info in Firestore
+      await this.saveUserData(user, additionalData,true);
+  
+      return user;
+    } catch (error) {
+      console.error('Error registering user:', error);
+      throw error;
     }
   }
 }

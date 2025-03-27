@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonTitle,IonTextarea , IonToolbar, IonButton, IonIcon, IonItem, IonLabel } from '@ionic/angular/standalone';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from './../../../services/auth.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -22,7 +23,7 @@ export class SignUpPage implements OnInit {
   confirmPassword: string = '';
   termsAccepted: boolean = false;
 
-  constructor(private router: Router, private fb: FormBuilder) { }
+  constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) { }
 
   nextStep() {
     if (this.name && this.surname && this.phone) {
@@ -32,7 +33,7 @@ export class SignUpPage implements OnInit {
     }
   }
 
-  register() {
+  async register() {
     if (!this.email || !this.password || !this.confirmPassword) {
       alert('Please fill in all fields.');
       return;
@@ -41,15 +42,25 @@ export class SignUpPage implements OnInit {
       alert('Passwords do not match.');
       return;
     }
-    if (!this.termsAccepted) {
+    if (this.termsAccepted) {
       alert('You must accept the terms and conditions.');
       return;
     }
-
-    // Simulate successful registration
-    alert('Registration successful!');
-    this.router.navigate(['/login']); // Redirect to login page
+  
+    try {
+      await this.authService.registerWithEmail(this.email, this.password, {
+        name: this.name,
+        surname: this.surname,
+        phone: this.phone
+      });
+  
+      alert('Registration successful!');
+      this.router.navigate(['/login']); // Redirect to login page
+    } catch (error) {
+      alert('Registration failed: ' + error);
+    }
   }
+  
 
   login() {
     this.router.navigate(['/login']);

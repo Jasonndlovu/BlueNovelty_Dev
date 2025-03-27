@@ -3,6 +3,7 @@ import { Auth, GoogleAuthProvider, signInWithPopup, signOut, authState, User, OA
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject  } from 'rxjs';
 import { createUserWithEmailAndPassword } from '@angular/fire/auth';
+import { getAuth, updateProfile } from "firebase/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -65,9 +66,13 @@ export class AuthService {
     }
   }
 
-  async saveUserData(user: User, additionalData?: { name: string; surname: string; phone: string }) {
+  async saveUserData(user: User, additionalData?: { name: string; surname: string; phone: string },justRegistered?: boolean) {
     const userRef = doc(this.firestore, `users/${user.uid}`);
     const userSnap = await getDoc(userRef);
+
+    if (justRegistered != true){
+      justRegistered = false;
+    }
 
     if (!userSnap.exists()) {
         const role = localStorage.getItem('userRole'); // Get stored role
@@ -88,9 +93,10 @@ export class AuthService {
             email: email,
             photoURL: user.photoURL || '',
             role: role, // Save role permanently
+            phoneNumber: additionalData?.phone || '',
             createdAt: new Date()
         });
-
+        if(justRegistered){this.updateUserProfile(displayName);}
         console.log('Saving to localStorage...');
         localStorage.setItem('userEmail', email);
         localStorage.setItem('userName', displayName);
@@ -99,6 +105,20 @@ export class AuthService {
     }
   }
   
+  async updateUserProfile(displayName: string){
+    var auth = getAuth();
+    if (auth.currentUser) {
+      try {
+        await updateProfile(auth.currentUser, { displayName });
+        console.log("Display Name Updated:", auth.currentUser.displayName);
+      } catch (error) {
+        console.error("Error updating display name:", error);
+      }
+    } else {
+      console.log("No user is signed in.");
+    }
+  }
+
   async logout() {
     try {
       await this.auth.signOut();
@@ -153,7 +173,7 @@ export class AuthService {
       const user = userCredential.user;
   
       // Save additional user info in Firestore
-      await this.saveUserData(user, additionalData);
+      await this.saveUserData(user, additionalData,true);
   
       return user;
     } catch (error) {

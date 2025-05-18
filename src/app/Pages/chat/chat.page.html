@@ -8,6 +8,7 @@
 </ion-header>
 
 <ion-content class="chat-container">
+  <app-global-background></app-global-background>
   <ion-list *ngIf="messages$ | async as messages">
     <ion-item *ngFor="let msg of messages" [class.sender]="msg.senderId === currentUserId" [class.receiver]="msg.senderId !== currentUserId">
       

@@ -89,5 +89,21 @@ export const routes: Routes = [
   {
     path: 'landing',
     loadComponent: () => import('./Pages/landing/landing.page').then( m => m.LandingPage)
-  }
+  },
+  {
+    path: 'upcoming-jobs',
+    loadComponent: () => import('./Pages/upcoming-jobs/upcoming-jobs.page').then( m => m.UpcomingJobsPage)
+  },
+  {
+    path: 'view-service',
+    loadComponent: () => import('./Pages/view-service/view-service.page').then( m => m.ViewtServicePage)
+  },
+  {
+    path: 'service-history',
+    loadComponent: () => import('./Pages/service-history/service-history.page').then( m => m.ServiceHistoryPage)
+  },
+  {
+    path: 'find-cleaner',
+    loadComponent: () => import('./Pages/find-cleaner/find-cleaner.page').then( m => m.FindCleanerPage)
+  },
 ];

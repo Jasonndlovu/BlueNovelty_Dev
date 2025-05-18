@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-import { IonContent, IonButton, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput } from '@ionic/angular/standalone';
+import { IonContent, IonButton,IonMenuButton, IonHeader, IonToolbar, IonTitle, IonList, IonItem, IonLabel, IonSelect, IonSelectOption, IonInput, IonButtons, IonBackButton } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './profile-settings.page.html',
   styleUrls: ['./profile-settings.page.scss'],
   standalone: true, // Make the component standalone
-  imports: [
+  imports: [IonBackButton, IonButtons, 
     IonContent,
     ReactiveFormsModule, // Use this instead of FormsModule
     IonButton,
@@ -17,6 +17,7 @@ import { IonContent, IonButton, IonHeader, IonToolbar, IonTitle, IonList, IonIte
     IonTitle,
     IonList,
     IonLabel,
+    IonMenuButton,
     IonItem,
     IonSelect,
     IonSelectOption,

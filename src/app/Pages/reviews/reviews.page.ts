@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonItem, IonLabel, IonIcon, IonCardHeader, IonSelectOption ,IonCardTitle, IonCardContent, IonCard } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonMenuButton,IonButton, IonList, IonItem, IonLabel, IonIcon, IonCardHeader, IonSelectOption ,IonCardTitle, IonCardContent, IonCard, IonButtons } from '@ionic/angular/standalone';
 import { ReviewService, Review } from '../../../services/review.service';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -13,13 +13,14 @@ import { addDoc, collection, Firestore } from '@angular/fire/firestore'; // ✅ 
   templateUrl: './reviews.page.html',
   styleUrls: ['./reviews.page.scss'],
   standalone: true,
-  imports: [IonCard, IonCardContent, IonSelectOption,IonCardTitle, IonCardHeader, IonLabel, IonItem, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonButtons, IonCard, IonCardContent, IonMenuButton,IonSelectOption,IonCardTitle, IonCardHeader, IonLabel, IonItem, IonList, IonButton, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ReviewsPage implements OnInit {
   serviceId!: string;
   reviews$!: Observable<Review[]>;
   newMessage = '';
   newStars = 5;
+  recipientId!:string;
 
   constructor(
     private reviewService: ReviewService, 
@@ -52,7 +53,8 @@ export class ReviewsPage implements OnInit {
       const reviewId = await this.reviewService.addReview(
         this.serviceId,
         this.newMessage,
-        this.newStars
+        this.newStars,
+        this.recipientId
       );
       console.log("Review successfully added with ID:", reviewId);
   

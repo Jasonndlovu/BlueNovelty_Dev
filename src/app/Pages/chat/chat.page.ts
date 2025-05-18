@@ -7,6 +7,7 @@ import { AuthService } from './../../../services/auth.service';
 import { Observable, firstValueFrom, of } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { doc, getDoc } from 'firebase/firestore';
+import { GlobalBackgroundComponent } from "../../components/global-background/global-background.component";
 
 
 @Component({
@@ -15,10 +16,11 @@ import { doc, getDoc } from 'firebase/firestore';
   styleUrls: ['./chat.page.scss'],
   standalone: true,
   imports: [
-    IonAvatar, IonBackButton, IonButtons, 
-    IonItem, IonList, IonFooter, IonButton, IonInput, IonContent, IonHeader, IonTitle, 
-    IonToolbar, CommonModule, FormsModule
-  ]
+    IonAvatar, IonBackButton, IonButtons,
+    IonItem, IonList, IonFooter, IonButton, IonInput, IonContent, IonHeader, IonTitle,
+    IonToolbar, CommonModule, FormsModule,
+    GlobalBackgroundComponent
+]
 })
 export class ChatPage implements OnInit {
   messages$!: Observable<any[]>;

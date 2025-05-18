@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, collectionData, orderBy,query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, collectionData, query, where, getDocs } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -10,10 +10,10 @@ export interface Review {
   userId: string;
   recipient: string;
   serviceId: string;
-  userName:string;
+  userName: string;
   message: string;
   stars: number;
-  createdAt: Date | Timestamp;  // 🔹 Allow both Date and Timestamp
+  createdAt: Date | Timestamp;
 }
 
 @Injectable({
@@ -22,23 +22,35 @@ export interface Review {
 export class ReviewService {
   constructor(private firestore: Firestore, private auth: Auth) {}
 
-  // Add a review
-  async addReview(serviceId: string, message: string, stars: number) {
-    const user = this.auth.currentUser;
-
-    // Check if user is logged in
-    if (!user) {
-      throw new Error("User not logged in");
+  // Add a review with comprehensive validation
+  async addReview(serviceId: string, message: string, stars: number, recipientId: string): Promise<string> {
+    // Validate inputs
+    if (!serviceId) {
+      throw new Error('Service ID is required');
+    }
+    if (!message?.trim()) {
+      throw new Error('Review message cannot be empty');
+    }
+    if (stars < 1 || stars > 5) {
+      throw new Error('Stars must be between 1 and 5');
+    }
+    if (!recipientId) {
+      throw new Error('Recipient ID is required');
     }
 
-    // Prepare the review object
+    const user = this.auth.currentUser;
+    if (!user) {
+      throw new Error('User not logged in');
+    }
+
+    // Prepare the review object with all required fields
     const review: Review = {
       userId: user.uid,
       userName: user.displayName || 'Anonymous',
-      recipient: 'holder',
-      serviceId,
-      message,
-      stars,
+      recipient: recipientId,
+      serviceId: serviceId,
+      message: message.trim(),
+      stars: stars,
       createdAt: Timestamp.now(),
     };
 
@@ -46,52 +58,61 @@ export class ReviewService {
     const reviewsRef = collection(this.firestore, 'reviews');
 
     try {
-      // Add review document to Firestore
       const docRef = await addDoc(reviewsRef, review);
-      console.log("Review successfully added with ID:", docRef.id);  // Log the document ID for confirmation
-      return docRef.id;  // Return the document ID, if needed for further processing (e.g., showing a success message).
+      console.log('Review successfully added with ID:', docRef.id);
+      return docRef.id;
     } catch (error) {
-      console.error("Error adding review:", error);
-      throw new Error("Error adding review: " + error);  // Display meaningful error
+      console.error('Error adding review:', error);
+      throw new Error(`Failed to add review: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
   // Get all reviews for a specific service
   getServiceReviews(serviceId: string): Observable<Review[]> {
+    if (!serviceId) {
+      throw new Error('Service ID is required');
+    }
+
     const reviewsRef = collection(this.firestore, 'reviews');
     const q = query(reviewsRef, where('serviceId', '==', serviceId));
     
     return collectionData(q, { idField: 'id' }).pipe(
-      map(reviews =>
-        reviews.map(review => ({
-          ...review,
-          createdAt: (review['createdAt'] as Timestamp)?.toDate() || new Date(),
-        }))
-      )
+      map(reviews => reviews.map(review => ({
+        ...review,
+        createdAt: this.convertTimestamp(review['createdAt'])
+      })))
     ) as Observable<Review[]>;
   }
 
   // Get all reviews received by a specific user
   async getUserReviews(userId: string): Promise<Review[]> {
-    console.log('Fetching reviews for userId:', userId);
-  
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
     const reviewsRef = collection(this.firestore, 'reviews');
-    const q = query(reviewsRef, where('recipient', '==', userId)); // Removed orderBy
-  
-    const querySnapshot = await getDocs(q);
-  
-    console.log('Found', querySnapshot.size, 'reviews'); // Debugging
-  
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      console.log('Review data:', data); // Log data to debug
-  
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data['createdAt'] instanceof Timestamp ? data['createdAt'].toDate() : new Date(),
-      } as Review;
-    });
+    const q = query(reviewsRef, where('recipient', '==', userId));
+
+    try {
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: this.convertTimestamp(data['createdAt'])
+        } as Review;
+      });
+    } catch (error) {
+      console.error('Error fetching user reviews:', error);
+      throw new Error(`Failed to get user reviews: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
-  
+
+  // Helper method to handle both Timestamp and Date conversion
+  private convertTimestamp(timestamp: Timestamp | Date | undefined): Date {
+    if (!timestamp) return new Date();
+    if (timestamp instanceof Date) return timestamp;
+    return timestamp.toDate();
+  }
 }

@@ -1,6 +1,9 @@
 <ion-content>
   <ion-header>
     <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
       <ion-title>Add Property Type</ion-title>
     </ion-toolbar>
   </ion-header>
@@ -25,6 +28,6 @@
       </ion-select>
     </ion-item>
 
-    <ion-button expand="full" (click)="addPropertyType()">Add Property Type</ion-button>
+    <ion-button color="dark" (click)="addPropertyType()">Add Property Type</ion-button>
   </ion-list>
 </ion-content>

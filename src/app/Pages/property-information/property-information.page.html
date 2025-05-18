@@ -1,107 +1,146 @@
 <ion-header>
   <ion-toolbar>
-    
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <app-global-background></app-global-background>
     <!-- Step 1: User Info -->
-    <div *ngIf="step === 1" class="Property-container">
-  
+    <div *ngIf="step === 1" class="p-4">
+      <div class="bg-white rounded-2xl shadow-md p-6 space-y-6">
       <h1>Let's get you started</h1>
       <ion-item>
         <ion-label>Details About Your Place</ion-label>
+        <ion-button class="edit-profile-btn" color="dark" (click)="navigateProperty()">Add Property</ion-button>
         <ion-button id="open-action-sheet">Select</ion-button>
-<ion-action-sheet trigger="open-action-sheet" 
-  header="Select property type..."
-  [buttons]="actionSheetButtons">
-</ion-action-sheet>
+        <ion-action-sheet trigger="open-action-sheet" 
+          header="Select property type..."
+          [buttons]="actionSheetButtons">
+        </ion-action-sheet>
       </ion-item>
     </div>
+    </div>
 
-    <div *ngIf="step === 2" class="Property-container">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Details About Your Clean</ion-card-title>
-    </ion-card-header>
+    <div *ngIf="step === 2" class="p-4">
+      <div class="bg-white rounded-2xl shadow-md p-6 space-y-6">
+        <h2 class="text-center text-xl font-semibold text-gray-800">Details About Your Clean</h2>
     
-    <ion-card-content>
-      <p><strong>Location:</strong> {{ selectedProperty?.location }}</p>
-      <ul>
-        <li>Bedrooms: {{ selectedProperty?.numberOfBedrooms }}</li>
-        <li>Bathrooms: {{ selectedProperty?.numberOfBathrooms }}</li>
-        <li>Living Rooms: {{ selectedProperty?.numberOfLivingRooms }}</li>
-        <li>Kitchens: {{ selectedProperty?.numberOfKitchens }}</li>
-        <li>Garages: {{ selectedProperty?.numberOfGarages }}</li>
-        <li>Floors: {{ selectedProperty?.numberOfFloors }}</li>
-      </ul>
+        <!-- Service Type Buttons -->
+        <div class="flex flex-wrap justify-between gap-2">
+          <button 
+            class="flex items-center gap-2 px-4 py-2 rounded-full border font-medium transition"
+            [ngClass]="{
+              'bg-blue-600 text-white': serviceType === 'Standard Cleaning (Indoor)',
+              'bg-gray-100 text-gray-800': serviceType !== 'Standard Cleaning (Indoor)'
+            }"
+            (click)="selectService('Standard Cleaning (Indoor)')">
+            Standard Cleaning (Indoor)
+          </button>
+    
+          <button 
+            class="flex items-center gap-2 px-4 py-2 rounded-full border font-medium transition"
+            [ngClass]="{
+              'bg-blue-600 text-white': serviceType === 'Commercial Cleaning',
+              'bg-gray-100 text-gray-800': serviceType !== 'Commercial Cleaning'
+            }"
+            (click)="selectService('Commercial Cleaning')">
+             Commercial Cleaning
+          </button>
+    
+          <button 
+            class="flex items-center gap-2 px-4 py-2 rounded-full border font-medium transition"
+            [ngClass]="{
+              'bg-blue-600 text-white': serviceType === 'Deep Cleaning',
+              'bg-gray-100 text-gray-800': serviceType !== 'Deep Cleaning'
+            }"
+            (click)="selectService('Deep Cleaning')">
+            Deep Cleaning
+          </button>
+        </div>
+    
+        <!-- Property Summary -->
+        <div class="text-sm text-gray-700">
+          <p><strong>Location:</strong> {{ selectedProperty?.location }}</p>
+          <ul class="list-disc list-inside space-y-1">
+            <li>{{ selectedProperty?.numberOfBedrooms }} Bedrooms</li>
+            <li>{{ selectedProperty?.numberOfBathrooms }} Bathrooms</li>
+            <li>{{ selectedProperty?.numberOfLivingRooms }} Living Rooms</li>
+            <li>{{ selectedProperty?.numberOfKitchens }} Kitchen</li>
+            <li>{{ selectedProperty?.numberOfGarages }} Garages</li>
+          </ul>
+        </div>
+    
+        <!-- Additional Notes -->
+        <div>
+          <textarea [(ngModel)]="additionalNotes"
+            class="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Tell us any additional information..."></textarea>
+        </div>
+    
+        <!-- Extras -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800">Extras</h3>
+          <div class="flex flex-wrap gap-2 mt-2">
+            <button *ngFor="let extra of extras"
+              (click)="toggleExtra(extra)"
+              class="flex items-center gap-1 px-3 py-2 rounded-full text-sm transition border"
+              [ngClass]="{
+                'bg-blue-500 text-white': extra.selected,
+                'bg-gray-100 text-gray-700': !extra.selected
+              }">
+              <ion-icon [name]="extra.icon" *ngIf="extra.icon"></ion-icon> {{ extra.name }}
+            </button>
+          </div>
+        </div>
+    
+       <!-- Booking Toggle -->
+<div class="text-center">
+  <p class="font-semibold text-sm text-blue-600 mb-2">GET 10% DISCOUNT FOR RE-OCCURRING BOOKINGS</p>
 
-      <ion-textarea placeholder="Tell us any additional information..."></ion-textarea>
-      
-      <p class="note">
-        <strong>Note to developer:</strong> This will not be stored in the backend but used to prepopulate the agreement page.
-      </p>
-      
-
-      <ion-item button (click)="openDateTimePicker()">
-        <ion-label>Choose Date & Time</ion-label>
-        <ion-icon slot="end" name="calendar"></ion-icon>
-      </ion-item>
-
-      <h3>Extras</h3>
-      <!-- <ion-list>
-        <ion-item *ngFor="let extra of extras">
-          <ion-icon [name]="extra.icon" slot="start"></ion-icon>
-          <ion-label>{{ extra.name }}</ion-label>
-          <ion-checkbox [(ngModel)]="extra.selected" slot="end"></ion-checkbox>
-        </ion-item>
-      </ion-list> -->
-
-      <ion-list>
-        <ion-item *ngFor="let extra of extras">
-          <ion-icon [name]="extra.icon" slot="start"></ion-icon>
-          <ion-label>{{ extra.name }}</ion-label>
-          <ion-checkbox name="extraItem" [(ngModel)]="extra.selected" (ionChange)="onCheckboxChange(extra)" slot="end">
-          </ion-checkbox>
-        </ion-item>
-      </ion-list>
-      
-
-      <p class="discount">GET 15% DISCOUNT FOR RECURRING BOOKINGS</p>
-
-      <ion-button expand="block" color="primary" (click)="getCleaner()" >
-        Lets Get Your Cleaner
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+  <!-- If Once-off: Show full date & time picker -->
+  <div  class="mt-4">
+    <button 
+      class="w-full flex justify-center items-center gap-2 px-4 py-3 text-white font-semibold bg-blue-600 rounded-lg shadow hover:bg-blue-700 transition"
+      (click)="openDateTimePicker()">
+      <ion-icon name="calendar" class="text-xl"></ion-icon>
+      Choose Date & Time
+    </button>
+    <p *ngIf="dateTimeWarning" class="text-red-500 text-xs mt-2">
+      Please select a valid date and time.
+    </p>
+    <p *ngIf="selectedDate_Time" class="text-sm text-gray-600 mt-2">
+      Selected: {{ selectedDate_Time | date:'fullDate' }} at {{ selectedDate_Time | date:'shortTime' }}
+    </p>
   </div>
-</ion-content>
-
-  <ion-modal [isOpen]="showDateTimeModal" >
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-buttons slot="start">
-            <ion-button (click)="closeDateTimePicker()" >Cancel</ion-button>
-          </ion-buttons>
-          <ion-title>Date and Time</ion-title>
-          <ion-buttons slot="end">
-            <ion-button [strong]="true" expand="full" (click)="confirmSelection()">Confirm</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content class="ion-padding">
+</div>
 
 
-          <ion-datetime name="selectedDateTime" [(ngModel)]="selectedDate_Time"
-                        [isDateEnabled]="isWeekday"
-                        [min]="minDate" 
-                        [max]="maxDate"
-                        (ionChange)="validateTime($event)"
-                        >
-          </ion-datetime>
+    
+        <!-- Pricing Breakdown -->
+        <div class="border-t pt-4 text-sm text-gray-800 space-y-1">
+          <p>Standard Cleaning (Indoor): <strong>{{ prices.standard | currency:'R'  }}</strong></p>
+          <div *ngFor="let extra of selectedExtras">
+            <p>+ {{ extra.name }} <strong>{{ extra.price | currency:'R' }}</strong></p>
+          </div>
+          <p>+ Admin Fee (5%): <strong>{{ adminFee | currency:'R' }}</strong></p>
+          <hr class="my-2">
+          <p class="text-lg font-semibold">Total Cost: {{ totalCost | currency:'R' }}</p>
+        </div>
+    
+        <!-- CTA Button -->
+        <button (click)="getCleaner()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-sm shadow transition">
+          Let’s Find Your Cleaner
+        </button>
+      </div>
+    </div>
+    
+    </ion-content>
 
-      </ion-content>
-    </ng-template>
-  </ion-modal>
+    <ion-modal [isOpen]="showDateTimeModal">
+   <app-date-time-picker></app-date-time-picker>
+    </ion-modal>
+    

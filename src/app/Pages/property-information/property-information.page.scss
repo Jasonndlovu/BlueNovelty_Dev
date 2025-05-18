@@ -42,3 +42,45 @@
   
     background:rgba(30, 30, 30, 0);
   }
+
+
+  .service-type-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .property-details {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+    color: #555;
+  }
+  
+  .note {
+    font-size: 12px;
+    color: green;
+  }
+  
+  .extras-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .discount {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #222;
+    text-align: center;
+  }
+  
+  .price-summary p {
+    margin: 4px 0;
+  }
+  
+  hr {
+    margin: 8px 0;
+  }
+  

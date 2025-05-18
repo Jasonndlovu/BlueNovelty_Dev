@@ -1,7 +1,7 @@
 import { Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonButton,   } from '@ionic/angular/standalone';
+import { IonContent, IonButton, IonText } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   templateUrl: './onboarding.page.html',
   styleUrls: ['./onboarding.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, FormsModule,IonButton]
+  imports: [IonText, IonContent, CommonModule, FormsModule,IonButton]
 })
 export class OnboardingPage implements OnInit {
 
